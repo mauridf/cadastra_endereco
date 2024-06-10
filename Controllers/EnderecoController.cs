@@ -77,6 +77,32 @@ public class EnderecoController : Controller
         return RedirectToAction("Index");
     }
 
+    [Authorize]
+    [HttpGet]
+    public ActionResult Edit(int id)
+    {
+        var endereco = _context.Enderecos.Find(id);
+        if (endereco == null)
+        {
+            return HttpNotFound();
+        }
+        return View(endereco);
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Edit(Endereco endereco)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Entry(endereco).State = System.Data.Entity.EntityState.Modified;
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        return View(endereco);
+    }
+
     [HttpGet]
     [Authorize]
     public async Task<ActionResult> GetEnderecoPorCep(string cep)
