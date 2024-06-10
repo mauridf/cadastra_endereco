@@ -1,0 +1,53 @@
+﻿@model cadastra_endereco.Models.Endereco
+
+@{
+    ViewBag.Title = "Novo Endereço";
+}
+
+<h2>Novo Endereço</h2>
+
+@using (Html.BeginForm("Create", "Endereco", FormMethod.Post))
+{
+    <div class="form-group">
+        <label>CEP</label>
+        @Html.TextBoxFor(m => m.Cep, new { @class = "form-control", id = "cep" })
+        <button type="button" onclick="buscarEndereco()" class="btn btn-info">Buscar Endereço</button>
+    </div>
+    <div class="form-group">
+        <label>Logradouro</label>
+        @Html.TextBoxFor(m => m.Logradouro, new { @class = "form-control", id = "logradouro" })
+    </div>
+    <div class="form-group">
+        <label>Bairro</label>
+        @Html.TextBoxFor(m => m.Bairro, new { @class = "form-control", id = "bairro" })
+    </div>
+    <div class="form-group">
+        <label>Cidade</label>
+        @Html.TextBoxFor(m => m.Cidade, new { @class = "form-control", id = "cidade" })
+    </div>
+    <div class="form-group">
+        <label>Estado</label>
+        @Html.TextBoxFor(m => m.Estado, new { @class = "form-control", id = "estado" })
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+}
+
+@section Scripts {
+    <script>
+        function buscarEndereco() {
+            var cep = document.getElementById("cep").value;
+            fetch(`@Url.Action("GetEnderecoPorCep", "Endereco")?cep=${cep}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById("logradouro").value = data.logradouro;
+                        document.getElementById("bairro").value = data.bairro;
+                        document.getElementById("cidade").value = data.localidade;
+                        document.getElementById("estado").value = data.uf;
+                    } else {
+                        alert("Endereço não encontrado!");
+                    }
+                });
+        }
+    </script>
+}

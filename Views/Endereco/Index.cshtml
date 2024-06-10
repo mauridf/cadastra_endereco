@@ -1,0 +1,41 @@
+﻿@model IEnumerable<cadastra_endereco.Models.Endereco>
+
+@{
+    ViewBag.Title = "Endereços";
+}
+
+<h2>Endereços</h2>
+
+<p>
+    @Html.ActionLink("Novo Endereço", "Create", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Exportar CSV", "ExportCsv", null, new { @class = "btn btn-secondary" })
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>CEP</th>
+            <th>Logradouro</th>
+            <th>Bairro</th>
+            <th>Cidade</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var endereco in Model)
+        {
+            <tr>
+                <td>@endereco.Cep</td>
+                <td>@endereco.Logradouro</td>
+                <td>@endereco.Bairro</td>
+                <td>@endereco.Cidade</td>
+                <td>@endereco.Estado</td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = endereco.Id }, new { @class = "btn btn-secondary" }) |
+                    @Html.ActionLink("Deletar", "Delete", new { id = endereco.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
