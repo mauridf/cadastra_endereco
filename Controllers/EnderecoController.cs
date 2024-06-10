@@ -51,6 +51,32 @@ public class EnderecoController : Controller
         return View(endereco);
     }
 
+    [Authorize]
+    [HttpGet]
+    public ActionResult Delete(int id)
+    {
+        var endereco = _context.Enderecos.Find(id);
+        if (endereco == null)
+        {
+            return HttpNotFound();
+        }
+        return View(endereco);
+    }
+
+    [Authorize]
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public ActionResult DeleteConfirmed(int id)
+    {
+        var endereco = _context.Enderecos.Find(id);
+        if (endereco != null)
+        {
+            _context.Enderecos.Remove(endereco);
+            _context.SaveChanges();
+        }
+        return RedirectToAction("Index");
+    }
+
     [HttpGet]
     [Authorize]
     public async Task<ActionResult> GetEnderecoPorCep(string cep)
