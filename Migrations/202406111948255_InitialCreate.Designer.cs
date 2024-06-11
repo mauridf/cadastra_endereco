@@ -13,7 +13,7 @@ namespace cadastra_endereco.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202406102308189_InitialCreate"; }
+            get { return "202406111948255_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

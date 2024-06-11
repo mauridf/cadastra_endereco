@@ -8,7 +8,7 @@
         public override void Up()
         {
             CreateTable(
-                "dbo.Enderecos",
+                "dbo.Enderecoes",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),

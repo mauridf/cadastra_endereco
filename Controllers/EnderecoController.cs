@@ -17,29 +17,52 @@ public class EnderecoController : Controller
         _context = new ApplicationDbContext();
     }
 
-    [Authorize]
     public ActionResult Index()
     {
-        var usuarioEmail = User.Identity.Name;
+        // Verifica se a sessão do usuário está ativa
+        if (Session["UserEmail"] == null)
+        {
+            // Redireciona para a tela de login se o usuário não estiver logado
+            return RedirectToAction("Login", "Account");
+        }
+
+        var usuarioEmail = Session["UserEmail"].ToString();
         var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == usuarioEmail);
+
+        if (usuario == null)
+        {
+            return HttpNotFound("Usuário não encontrado.");
+        }
 
         var enderecos = _context.Enderecos.Where(e => e.UsuarioId == usuario.Id).ToList();
         return View(enderecos);
     }
 
+
     [HttpGet]
-    [Authorize]
     public ActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
-    [Authorize]
     public ActionResult Create(Endereco endereco)
     {
-        var usuarioEmail = User.Identity.Name;
+        // Verifica se a sessão do usuário está ativa
+        if (Session["UserEmail"] == null)
+        {
+            // Redireciona para a tela de login se o usuário não estiver logado
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Obtém o email do usuário da sessão
+        var usuarioEmail = Session["UserEmail"].ToString();
         var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == usuarioEmail);
+
+        if (usuario == null)
+        {
+            return HttpNotFound("Usuário não encontrado.");
+        }
 
         if (ModelState.IsValid)
         {
@@ -51,7 +74,6 @@ public class EnderecoController : Controller
         return View(endereco);
     }
 
-    [Authorize]
     [HttpGet]
     public ActionResult Delete(int id)
     {
@@ -63,7 +85,6 @@ public class EnderecoController : Controller
         return View(endereco);
     }
 
-    [Authorize]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public ActionResult DeleteConfirmed(int id)
@@ -77,7 +98,6 @@ public class EnderecoController : Controller
         return RedirectToAction("Index");
     }
 
-    [Authorize]
     [HttpGet]
     public ActionResult Edit(int id)
     {
@@ -89,13 +109,20 @@ public class EnderecoController : Controller
         return View(endereco);
     }
 
-    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public ActionResult Edit(Endereco endereco)
     {
         if (ModelState.IsValid)
         {
+            var existingEndereco = _context.Enderecos.AsNoTracking().FirstOrDefault(e => e.Id == endereco.Id);
+            if (existingEndereco == null)
+            {
+                return HttpNotFound("Endereço não encontrado.");
+            }
+
+            endereco.UsuarioId = existingEndereco.UsuarioId; // Preserve o UsuarioId existente
+
             _context.Entry(endereco).State = System.Data.Entity.EntityState.Modified;
             _context.SaveChanges();
             return RedirectToAction("Index");
@@ -103,8 +130,8 @@ public class EnderecoController : Controller
         return View(endereco);
     }
 
+
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult> GetEnderecoPorCep(string cep)
     {
         using (var client = new HttpClient())
@@ -113,19 +140,32 @@ public class EnderecoController : Controller
             if (response.IsSuccessStatusCode)
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
-                var endereco = JsonConvert.DeserializeObject<Endereco>(jsonResult);
+                var endereco = JsonConvert.DeserializeObject<dynamic>(jsonResult);
                 return Json(endereco, JsonRequestBehavior.AllowGet);
             }
         }
         return Json(null, JsonRequestBehavior.AllowGet);
     }
 
+
     [HttpGet]
-    [Authorize]
     public ActionResult ExportCsv()
     {
-        var usuarioEmail = User.Identity.Name;
+        // Verifica se a sessão do usuário está ativa
+        if (Session["UserEmail"] == null)
+        {
+            // Redireciona para a tela de login se o usuário não estiver logado
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Obtém o email do usuário da sessão
+        var usuarioEmail = Session["UserEmail"].ToString();
         var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == usuarioEmail);
+
+        if (usuario == null)
+        {
+            return HttpNotFound("Usuário não encontrado.");
+        }
 
         var enderecos = _context.Enderecos.Where(e => e.UsuarioId == usuario.Id).ToList();
         var csv = new StringBuilder();
