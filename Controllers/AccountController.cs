@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Security;
 using cadastra_endereco.Data;
+using cadastra_endereco.Models;
 
 public class AccountController : Controller
 {
@@ -13,28 +14,47 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public ActionResult Login()
+    public ActionResult Login(string returnUrl, string message)
     {
+        ViewBag.Message = message;
         return View();
     }
 
     [HttpPost]
-    public ActionResult Login(string email, string senha)
+    [ValidateAntiForgeryToken]
+    public ActionResult Login(Usuario usuario, string returnUrl)
     {
-        var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == email && u.Senha == senha);
-        if (usuario != null)
+        if (ModelState.IsValid)
         {
-            FormsAuthentication.SetAuthCookie(email, false);
-            return RedirectToAction("Index", "Endereco");
+            var user = _context.Usuarios.FirstOrDefault(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
+
+            if (user != null)
+            {
+                // Autenticar o usuário
+                Session["UserID"] = user.Id.ToString();
+                Session["UserEmail"] = user.Email.ToString();
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+
+                return RedirectToAction("Index", "Endereco");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Credenciais inválidas. Tente novamente.");
+            }
         }
-        ModelState.AddModelError("", "Credenciais inválidas");
-        return View();
+        return View(usuario);
     }
 
     [HttpGet]
     public ActionResult Logout()
     {
+        Session.Clear();
         FormsAuthentication.SignOut();
-        return RedirectToAction("Login");
+        return RedirectToAction("Login", "Account");
     }
+
 }
