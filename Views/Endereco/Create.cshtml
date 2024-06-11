@@ -36,17 +36,21 @@
     <script>
         function buscarEndereco() {
             var cep = document.getElementById("cep").value;
+
             fetch(`@Url.Action("GetEnderecoPorCep", "Endereco")?cep=${cep}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        document.getElementById("logradouro").value = data.logradouro;
-                        document.getElementById("bairro").value = data.bairro;
-                        document.getElementById("cidade").value = data.localidade;
-                        document.getElementById("estado").value = data.uf;
+                        document.getElementById("logradouro").value = data.logradouro || "";
+                        document.getElementById("bairro").value = data.bairro || "";
+                        document.getElementById("cidade").value = data.localidade || "";
+                        document.getElementById("estado").value = data.uf || "";
                     } else {
                         alert("Endereço não encontrado!");
                     }
+                })
+                .catch(error => {
+                    alert("Erro ao buscar o CEP: " + error);
                 });
         }
     </script>

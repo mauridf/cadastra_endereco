@@ -129,14 +129,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EnderecoController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202406102308189_InitialCreate.cs" />
-    <Compile Include="Migrations\202406102308189_InitialCreate.designer.cs">
-      <DependentUpon>202406102308189_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202406111948255_InitialCreate.cs" />
+    <Compile Include="Migrations\202406111948255_InitialCreate.designer.cs">
+      <DependentUpon>202406111948255_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Endereco.cs" />
@@ -191,9 +190,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Endereco\Index.cshtml" />
     <Content Include="Views\Endereco\Create.cshtml" />
@@ -231,8 +227,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202406102308189_InitialCreate.resx">
-      <DependentUpon>202406102308189_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202406111948255_InitialCreate.resx">
+      <DependentUpon>202406111948255_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
