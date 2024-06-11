@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using cadastra_endereco.Data;
@@ -24,29 +25,37 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public ActionResult Login(Usuario usuario, string returnUrl)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = _context.Usuarios.FirstOrDefault(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
-
-            if (user != null)
+            if (ModelState.IsValid)
             {
-                // Autenticar o usuário
-                Session["UserID"] = user.Id.ToString();
-                Session["UserEmail"] = user.Email.ToString();
+                var user = _context.Usuarios.FirstOrDefault(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
 
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                if (user != null)
                 {
-                    return Redirect(returnUrl);
-                }
+                    // Autenticar o usuário
+                    Session["UserID"] = user.Id.ToString();
+                    Session["UserEmail"] = user.Email.ToString();
 
-                return RedirectToAction("Index", "Endereco");
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                    return RedirectToAction("Index", "Endereco");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Credenciais inválidas. Tente novamente.");
+                }
             }
-            else
-            {
-                ModelState.AddModelError("", "Credenciais inválidas. Tente novamente.");
-            }
+            return View(usuario);
         }
-        return View(usuario);
+        catch(Exception ex)
+        {
+            ViewBag.ErrorMessage = "Ocorreu uma excessão ao efetuar Login.";
+            return View("Error");
+        }
     }
 
     [HttpGet]
