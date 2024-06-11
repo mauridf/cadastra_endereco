@@ -195,6 +195,7 @@
     <Content Include="Views\Endereco\Create.cshtml" />
     <Content Include="Views\Endereco\Delete.cshtml" />
     <Content Include="Views\Endereco\Edit.cshtml" />
+    <Content Include="Views\Account\Cadastro.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

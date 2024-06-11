@@ -59,6 +59,44 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    public ActionResult Cadastro()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Cadastro(Usuario usuario)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                // Verificar se o e-mail já está cadastrado
+                var existingUser = _context.Usuarios.FirstOrDefault(u => u.Email == usuario.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "Este e-mail já está sendo utilizado.");
+                    return View(usuario);
+                }
+
+                // Adicionar o usuário
+                _context.Usuarios.Add(usuario);
+                _context.SaveChanges();
+
+                // Redirecionar para a tela de login após o cadastro
+                return RedirectToAction("Login");
+            }
+            return View(usuario);
+        }
+        catch (Exception ex)
+        {
+            ViewBag.ErrorMessage = "Ocorreu um erro ao cadastrar um usuário.";
+            return View("Error");
+        }
+    }
+
+    [HttpGet]
     public ActionResult Logout()
     {
         Session.Clear();
